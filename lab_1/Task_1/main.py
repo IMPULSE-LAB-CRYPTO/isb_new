@@ -1,63 +1,34 @@
-import argparse
-
-def parsing() -> argparse.Namespace:
-    """
-    Парсинг аргументов командной строки
-    """
-    parser = argparse.ArgumentParser(description="Шифрование текста с использованием шифра Виженера")
-    parser.add_argument("_text", type=str, help="Текст для шифрования")
-    parser.add_argument("_key", type=str, help="Ключ для шифрования")
-    args = parser.parse_args()
-    return args
-
-
-text_1 = (
-    "Посол Франции в Риме Блез де Виженер, познакомившись с трудами Тритемия, Белазо, Кардано, Порта, Альберти,"
-    "также увлёкся криптографией. В 1585 году он написал «Трактат о шифрах», в котором излагаются основы криптографии. "
-    "В этом труде он замечает: «Все вещи в мире представляют собой шифр. Вся природа является просто шифром и "
-    "секретным письмом». Эта мысль была позднее повторена Блезом Паскалем — одним из основоположников теории "
-    "вероятностей, а в XX веке и Норбертом Винером — «отцом кибернетики». По сути дела Виженер объединил подходы "
-    "Тритемия, Беллазо, Порта к шифрованию открытых текстов, по существу не внеся в них ничего оригинального."
-)
-key_1 = "ибас"
-
-
-def shifr(text, key):
+def shifr(text, key, alphabet):
     """
     Функция кодирования текста при помощи метода Вижинера
     :param text: шифруемый текст
     :param key: ключ шифрования
+    :param alphabet: алфавит шифрования
     :return: зашифрованный текст
     """
     key = key.lower()
-    shifr_text = []
-    key_len = len(key)
+    key_length = len(key)
+    shifr_text = ''
+    alphabet_size = len(alphabet)
 
-    #ASCII-код
-    #ord("А") = 1040
-    #ord("Я") = 1071
-    #ord("а") = 1072
-    #ord("я") = 1103
+    for i in range (len(text)):
+        char = text[i]
+        if char.lower() in alphabet:
+            key_char = key[i % key_length].lower()
+            shift = alphabet.find(key_char)
 
-    int_key = [ord(i) for i in key]
-    int_text = [ord(i) for i in text]
+            char_index = alphabet.find(char.lower())
 
-    #растянуть ключ на длину текста (не нужно)
-    #key_repeat = (key*(---))
+            new_index = (char_index + shift) % alphabet_size
 
-    for i in range (len(int_text)):
-        if text[i].isalpha():
-            #для ключей больше 32 символов необходимо %32 дабы зациклить
-            if text[i].isupper():
-                shift = (int_key[i % key_len] - 1040) % 32
-                shifr_text.append(chr((int_text[i] + shift - 1040) % 32 + 1040))
+            if char.isupper():
+                shifr_text += alphabet[new_index].upper()
             else:
-                shift = (int_key[i % key_len] - 1072) % 32
-                shifr_text.append(chr((int_text[i] + shift - 1072) % 32 + 1072))
+                shifr_text += alphabet[new_index]
         else:
-            shifr_text.append(text[i])
+            shifr_text += char
 
-    return ''.join(shifr_text)
+    return shifr_text
 
 def save_to_file(filename, data):
     """
@@ -68,22 +39,24 @@ def save_to_file(filename, data):
     with open(filename, "w", encoding="utf-8") as file:
         file.write(data)
 
-def main():
-    args = parsing()
-    text = args._text
-    key = args._key
 
-    # Шифруем текст
-    shifr_text = shifr(text, key)
+def main():
+    alphabet = "абвгдежзийклмнопрстуфхцчшщъыьэюя "
+
+    with open('original_text.txt', 'r', encoding='utf-8') as file:
+        original_text = file.read()
+    with open('key.txt', 'r', encoding='utf-8') as file:
+        key = file.read()
+
+
+    shifr_text = shifr(original_text, key, alphabet)
     print("Зашифрованный текст: ")
     print(shifr_text)
 
-    # Сохраняем исходный текст, зашифрованный текст и ключ в файлы
-    save_to_file("original_text.txt", text)
     save_to_file("shifr_text.txt", shifr_text)
-    save_to_file("key.txt", key)
+    print("\nДанные сохранены в файлы: original_text.txt, encrypted_text.txt, key.txt")
 
-    print("Данные сохранены в файлы: original_text.txt, encrypted_text.txt, key.txt")
+
 if __name__ == "__main__":
     main()
 

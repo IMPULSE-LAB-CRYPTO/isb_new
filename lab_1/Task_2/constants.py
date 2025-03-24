@@ -39,3 +39,5 @@ DECRYPT_KEY_FROM_SINGLE_ALPHABET = {
     "У": "д", "Ю": "х", "Щ": "э", "Г": "ц",
     "П": "с", "Ы": "ч", "В": "з", "О": " ",
 }
+
+PATH_TO_ENCRYPTED_TEXT = "encrypted_text.txt"

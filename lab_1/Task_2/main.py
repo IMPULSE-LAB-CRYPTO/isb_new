@@ -58,7 +58,7 @@ def create_crypt_key(reduction_dict, decrypt_key):
 def main():
     try:
         # Чтение файла
-        with open('encrypted_text.txt', 'r', encoding='utf-8') as file:
+        with open(PATH_TO_ENCRYPTED_TEXT, 'r', encoding='utf-8') as file:
             original_text = file.read()
 
         # Зашифрованный текст

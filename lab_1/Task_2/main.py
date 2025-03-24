@@ -56,48 +56,57 @@ def create_crypt_key(reduction_dict, decrypt_key):
 
 
 def main():
-    with open('encrypted_text.txt', 'r', encoding='utf-8') as file:
-        original_text = file.read()
+    try:
+        # Чтение файла
+        with open('encrypted_text.txt', 'r', encoding='utf-8') as file:
+            original_text = file.read()
 
-    #Зашифрованный текст
-    print("\nЗашифрованный текст:\n")
-    print(original_text)
+        # Зашифрованный текст
+        print("\nЗашифрованный текст:\n")
+        print(original_text)
 
-    # Свод к единому алфавиту для удобства
-    text = original_text
-    for char in text:
-        if char in REDUCTION_TO_SINGLE_ALPHABET:
-            text = text.replace(char, REDUCTION_TO_SINGLE_ALPHABET[char])
+        # Свод к единому алфавиту
+        text = original_text
+        for char in text:
+            if char in REDUCTION_TO_SINGLE_ALPHABET:
+                text = text.replace(char, REDUCTION_TO_SINGLE_ALPHABET[char])
 
-    print("__________________________________________\n\nСвод к единому алфавиту:\n")
-    print(text)
+        print("__________________________________________\n\nСвод к единому алфавиту:\n")
+        print(text)
 
-    #Индексы частот
-    percent_dict = calculate_freq_index(text)
+        # Расчет частот
+        percent_dict = calculate_freq_index(text)
 
-    #Сортировка значений ключей
-    print("\n_________________________________________\n\nИндекс частот зашифрованного текста:\n")
-    sorted_dict = {}
-    for key in sorted(percent_dict, key=percent_dict.get, reverse=True):
-        sorted_dict[key] = percent_dict[key]
-    print(sorted_dict)
+        # Сортировка частот
+        print("\n_________________________________________\n\nИндекс частот зашифрованного текста:\n")
+        sorted_dict = {}
+        for key in sorted(percent_dict, key=percent_dict.get, reverse=True):
+            sorted_dict[key] = percent_dict[key]
+        print(sorted_dict)
 
-    print("\n___________________________________________\n\nДешифрованный текст:\n")
-    for char in text:
-        if char in DECRYPT_KEY_FROM_SINGLE_ALPHABET:
-            text = text.replace(char, DECRYPT_KEY_FROM_SINGLE_ALPHABET[char])
+        # Дешифровка
+        print("\n___________________________________________\n\nДешифрованный текст:\n")
+        for char in text:
+            if char in DECRYPT_KEY_FROM_SINGLE_ALPHABET:
+                text = text.replace(char, DECRYPT_KEY_FROM_SINGLE_ALPHABET[char])
+        print(text)
 
-    print(text)
-    print("\n")
+        # Создание ключа
+        crypt_key = create_crypt_key(REDUCTION_TO_SINGLE_ALPHABET, DECRYPT_KEY_FROM_SINGLE_ALPHABET)
+        print("\nКлюч шифрования:\n")
+        print(crypt_key)
 
-    #Получение ключа шифрования
-    crypt_key = create_crypt_key(REDUCTION_TO_SINGLE_ALPHABET, DECRYPT_KEY_FROM_SINGLE_ALPHABET)
-    print(crypt_key)
+        # Запись результатов
+        write_to_file("decrypted_text.txt", text)
+        write_to_file("decrypt_key.txt", str(crypt_key))
+        print("\nРезультаты успешно записаны в файлы")
 
-    #Запись в файлы
-    write_to_file("decrypted_text.txt", text)
-    write_to_file("decrypt_key.txt", str(crypt_key))
-    print("\nРасшифрованный текст и ключ записаны в файлы")
+    except FileNotFoundError:
+        print("Ошибка: файл encrypted_text.txt не найден")
+    except UnicodeDecodeError:
+        print("Ошибка: проблема с кодировкой файла")
+    except Exception as e:
+        print(f"Произошла ошибка: {e}")
 
 if __name__ == "__main__":
     main()

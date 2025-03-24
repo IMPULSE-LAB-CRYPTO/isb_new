@@ -1,3 +1,6 @@
+from constants import *
+
+
 def shifr(text, key, alphabet):
     """
     Функция кодирования текста при помощи метода Вижинера
@@ -41,15 +44,12 @@ def save_to_file(filename, data):
 
 
 def main():
-    alphabet = "абвгдежзийклмнопрстуфхцчшщъыьэюя "
-
-    with open('original_text.txt', 'r', encoding='utf-8') as file:
+    with open(PATH_TO_TEXT_FILE, 'r', encoding='utf-8') as file:
         original_text = file.read()
-    with open('key.txt', 'r', encoding='utf-8') as file:
+    with open(PATH_TO_KEY_FILE, 'r', encoding='utf-8') as file:
         key = file.read()
 
-
-    shifr_text = shifr(original_text, key, alphabet)
+    shifr_text = shifr(original_text, key, ALPHABET)
     print("Зашифрованный текст: ")
     print(shifr_text)
 

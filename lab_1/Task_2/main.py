@@ -1,4 +1,4 @@
-from conctants import *
+from constants import *
 
 
 def write_to_file(filename, content):

@@ -11,6 +11,15 @@ def write_to_file(filename, content):
         file.write(content)
 
 
+def read_file(filename):
+    """
+    Читает данные из файл
+    :param filename: имя файла
+    """
+    with open(filename, "r", encoding="utf-8") as file:
+        return file.read()
+
+
 def calculate_freq_index(text):
     """
     Вычисляет индекс частот появления букв в нашем тексте
@@ -29,7 +38,7 @@ def calculate_freq_index(text):
             
     char_percentages = {}
     for char, count in char_count.items():
-        char_percentages[char] = (count / text_len) * 100
+        char_percentages[char] = (count / text_len)
 
     return char_percentages
     
@@ -58,8 +67,7 @@ def create_crypt_key(reduction_dict, decrypt_key):
 def main():
     try:
         # Чтение файла
-        with open(PATH_TO_ENCRYPTED_TEXT, 'r', encoding='utf-8') as file:
-            original_text = file.read()
+        original_text = read_file(PATH_TO_ENCRYPTED_TEXT)
 
         # Зашифрованный текст
         print("\nЗашифрованный текст:\n")
@@ -97,12 +105,12 @@ def main():
         print(crypt_key)
 
         # Запись результатов
-        write_to_file("decrypted_text.txt", text)
-        write_to_file("decrypt_key.txt", str(crypt_key))
+        write_to_file(PATH_TO_WRITE_DECRYPTED_TEXT_FILE, text)
+        write_to_file(PATH_TO_WRITE_KEY, str(crypt_key))
         print("\nРезультаты успешно записаны в файлы")
 
     except FileNotFoundError:
-        print("Ошибка: файл encrypted_text.txt не найден")
+        print("Ошибка: файл зашифрованного текста не найден")
     except UnicodeDecodeError:
         print("Ошибка: проблема с кодировкой файла")
     except Exception as e:

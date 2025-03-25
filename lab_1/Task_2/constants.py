@@ -41,3 +41,7 @@ DECRYPT_KEY_FROM_SINGLE_ALPHABET = {
 }
 
 PATH_TO_ENCRYPTED_TEXT = "encrypted_text.txt"
+
+PATH_TO_WRITE_DECRYPTED_TEXT_FILE = "decrypted_text.txt"
+
+PATH_TO_WRITE_KEY = "decrypt_key.txt"

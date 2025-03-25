@@ -43,18 +43,25 @@ def save_to_file(filename, data):
         file.write(data)
 
 
+def read_file(filename):
+    """
+    Читает данные из файл
+    :param filename: имя файла
+    """
+    with open(filename, "r", encoding="utf-8") as file:
+        return file.read()
+
+
 def main():
-    with open(PATH_TO_TEXT_FILE, 'r', encoding='utf-8') as file:
-        original_text = file.read()
-    with open(PATH_TO_KEY_FILE, 'r', encoding='utf-8') as file:
-        key = file.read()
+    original_text = read_file(PATH_TO_TEXT_FILE)
+    key = read_file(PATH_TO_KEY_FILE)
 
     shifr_text = shifr(original_text, key, ALPHABET)
     print("Зашифрованный текст: ")
     print(shifr_text)
 
-    save_to_file("shifr_text.txt", shifr_text)
-    print("\nДанные сохранены в файлы: original_text.txt, encrypted_text.txt, key.txt")
+    save_to_file(PATH_TO_WRITE_TEXT_FILE, shifr_text)
+    print("\nДанные сохранены в файлы: shifr_text.txt")
 
 
 if __name__ == "__main__":

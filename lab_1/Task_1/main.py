@@ -53,15 +53,23 @@ def read_file(filename):
 
 
 def main():
-    original_text = read_file(PATH_TO_TEXT_FILE)
-    key = read_file(PATH_TO_KEY_FILE)
+    try:
+        original_text = read_file(PATH_TO_TEXT_FILE)
+        key = read_file(PATH_TO_KEY_FILE)
 
-    shifr_text = shifr(original_text, key, ALPHABET)
-    print("Зашифрованный текст: ")
-    print(shifr_text)
+        shifr_text = shifr(original_text, key, ALPHABET)
+        print("Зашифрованный текст: ")
+        print(shifr_text)
 
-    save_to_file(PATH_TO_WRITE_TEXT_FILE, shifr_text)
-    print("\nДанные сохранены в файлы: shifr_text.txt")
+        save_to_file(PATH_TO_WRITE_TEXT_FILE, shifr_text)
+        print("\nДанные сохранены в файлы: shifr_text.txt")
+
+    except FileNotFoundError:
+        print("Ошибка: файл для чтения не найден")
+    except UnicodeDecodeError:
+        print("Ошибка: проблема с кодировкой файла")
+    except Exception as e:
+        print(f"Произошла ошибка: {e}")
 
 
 if __name__ == "__main__":

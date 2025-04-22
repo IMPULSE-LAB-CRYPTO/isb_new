@@ -1,5 +1,16 @@
+from constants import *
+
 import math
 import re
+
+
+def read_file(filename):
+    """
+    Читает данные из файла, обрезая пробельные символы
+    :param filename: имя файла
+    """
+    with open(filename, "r", encoding="utf-8") as file:
+        return file.read().strip()
 
 
 def frequency_test(sequence):
@@ -98,35 +109,45 @@ def longest_run_of_ones_test_needCalculatorToCount(sequence, block_size=128):
         return 0.0
 
 
+def main():
+    try:
+        # Загрузка сгенерированной последовательности
+        sequence_cpp = read_file(PATH_TO_CPP_SEQ)
 
-# Загрузка сгенерированной последовательности
-with open("C:\OIB_lab2\lab_2\Task_1\Random_seq_cpp.txt", "r") as file:
-    sequence_cpp = file.read().strip()
+        sequence_java = read_file(PATH_TO_CPP_SEQ)
 
-with open("C:\OIB_lab2\lab_2\Task_1\Random_seq_java.txt", "r") as file:
-    sequence_java = file.read().strip()
+        # Применение тестов
+        p_value_freq_cpp = frequency_test(sequence_cpp)
+        p_value_runs_cpp = runs_test(sequence_cpp)
+        NEED_TO_CALCULATE_cpp = longest_run_of_ones_test_needCalculatorToCount(sequence_cpp)
 
-# Применение тестов
-p_value_freq_cpp = frequency_test(sequence_cpp)
-p_value_runs_cpp = runs_test(sequence_cpp)
-NEED_TO_CALCULATE_cpp = longest_run_of_ones_test_needCalculatorToCount(sequence_cpp)
+        p_value_freq_java = frequency_test(sequence_java)
+        p_value_runs_java = runs_test(sequence_java)
+        NEED_TO_CALCULATE_java = longest_run_of_ones_test_needCalculatorToCount(sequence_java)
 
-p_value_freq_java = frequency_test(sequence_java)
-p_value_runs_java = runs_test(sequence_java)
-NEED_TO_CALCULATE_java = longest_run_of_ones_test_needCalculatorToCount(sequence_java)
-
-# Вывод результатов
-print("C++ Sequence:")
-print(f"Frequency Test p-value: {p_value_freq_cpp}")
-print(f"Runs Test p-value: {p_value_runs_cpp}")
-print(f"Longest Run of Ones Test p-value: {NEED_TO_CALCULATE_cpp}")
-#Проверил на калькуляторе:
-#Regularized upper incomplete gamma function: 0.63205382
+        # Вывод результатов
+        print("C++ Sequence:")
+        print(f"Frequency Test p-value: {p_value_freq_cpp}")
+        print(f"Runs Test p-value: {p_value_runs_cpp}")
+        print(f"Longest Run of Ones Test p-value: {NEED_TO_CALCULATE_cpp}")
+        #Проверил на калькуляторе:
+        #Regularized upper incomplete gamma function: 0.63205382
 
 
-print("\nJava Sequence:")
-print(f"Frequency Test p-value: {p_value_freq_java}")
-print(f"Runs Test p-value: {p_value_runs_java}")
-print(f"Longest Run of Ones Test p-value: {NEED_TO_CALCULATE_java}")
-#Проверил на калькуляторе:
-#Regularized upper incomplete gamma function: 0.63205382
+        print("\nJava Sequence:")
+        print(f"Frequency Test p-value: {p_value_freq_java}")
+        print(f"Runs Test p-value: {p_value_runs_java}")
+        print(f"Longest Run of Ones Test p-value: {NEED_TO_CALCULATE_java}")
+        #Проверил на калькуляторе:
+        #Regularized upper incomplete gamma function: 0.63205382
+
+    except FileNotFoundError:
+        print("Ошибка: файл зашифрованного текста не найден")
+    except UnicodeDecodeError:
+        print("Ошибка: проблема с кодировкой файла")
+    except Exception as e:
+        print(f"Произошла ошибка: {e}")
+
+
+if __name__ == "__main__":
+    main()

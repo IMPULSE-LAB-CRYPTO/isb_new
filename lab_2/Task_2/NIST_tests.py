@@ -13,6 +13,22 @@ def read_file(filename):
         return file.read().strip()
 
 
+def write_to_file(filename, content_1, content_2, content_3):
+    """
+    Записывает содержимое в файл в формате:
+    :param filename: имя файла для записи (включая путь при необходимости)
+    :param content_1: результат частотного теста
+    :param content_2: результат теста на серии
+    :param content_3: результат теста на длинные серии
+    """
+    with open(filename, 'a', encoding='utf-8') as file:
+        file.write(f"\nЗначение частотного теста P-value: {content_1}")
+
+        file.write(f"\nЗначение теста на одинаковые подряд идущие биты P-value: {content_2}")
+
+        file.write(f"\nЗначение теста на самую длинную последовательность(требуется подсчет): {content_3}")
+
+
 def frequency_test(sequence):
     """
     Проверяет, что количество нулей и единиц в последовательности примерно одинаково
@@ -140,6 +156,10 @@ def main():
         print(f"Longest Run of Ones Test p-value: {NEED_TO_CALCULATE_java}")
         #Проверил на калькуляторе:
         #Regularized upper incomplete gamma function: 0.63205382
+
+        #Запись в текстовый файл результаты
+        write_to_file(PATH_TO_NIST_RES_CPP, p_value_freq_cpp, p_value_runs_cpp, NEED_TO_CALCULATE_cpp)
+        write_to_file(PATH_TO_NIST_RES_JAVA, p_value_freq_java, p_value_runs_java, NEED_TO_CALCULATE_java)
 
     except FileNotFoundError:
         print("Ошибка: файл зашифрованного текста не найден")

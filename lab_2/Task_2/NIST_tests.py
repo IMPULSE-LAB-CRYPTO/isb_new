@@ -2,7 +2,7 @@ from constants import *
 
 import math
 import re
-
+from scipy.special import gammainc
 
 def read_file(filename):
     """
@@ -22,11 +22,11 @@ def write_to_file(filename, content_1, content_2, content_3):
     :param content_3: результат теста на длинные серии
     """
     with open(filename, 'a', encoding='utf-8') as file:
-        file.write(f"\nЗначение частотного теста P-value: {content_1}")
+        file.write(f"Значение частотного теста P-value: {content_1}")
 
         file.write(f"\nЗначение теста на одинаковые подряд идущие биты P-value: {content_2}")
 
-        file.write(f"\nЗначение теста на самую длинную последовательность(требуется подсчет): {content_3}")
+        file.write(f"\nЗначение теста на самую длинную последовательность: {content_3}")
 
 
 def frequency_test(sequence):
@@ -38,7 +38,7 @@ def frequency_test(sequence):
     n = len(sequence)
     ones = sequence.count('1')
     zeros = sequence.count('0')
-    sum = ones - zeros;
+    sum = ones - zeros
     S_n = abs(sum) / (n ** 0.5)
     p_value = math.erfc(S_n / (2 ** 0.5))
     return p_value
@@ -52,29 +52,28 @@ def runs_test(sequence):
     """
     n = len(sequence)
     ones = sequence.count('1')
-    zeros = sequence.count('0')
 
     prop = ones / n #Доля единиц в seq
     tau = 2 / (n ** 0.5)
     if abs(prop - 0.5) >= tau:
         return 0.0
 
-    runs = 1 #Знакоперемены
-    for i in range(1, n):
-        if sequence[i] != sequence[i - 1]:
+    runs = 0 #Знакоперемены
+    for i in range(0, n-1):
+        if sequence[i] != sequence[i + 1]:
             runs += 1
 
     p_value = math.erfc(abs(runs - 2 * n * prop * (1 - prop)) /
-                        (2 * (2 * n)** 0.5 * prop * (1 - prop)) )
+                        (2 * (2 * n)**0.5 * prop * (1 - prop)))
     return p_value
 
 
-def longest_run_of_ones_test_needCalculatorToCount(sequence, block_size=128):
+def longest_run_of_ones_test(sequence, block_size=8):
     """
     Тест на самую длинную последовательность единиц в блоке
     :param sequence: Передаваемая последовательность (бит)
-    :param block_size: Длина последовательности - 128, (блоков - 8)
-    :return: Хи-квадрат/2 для калькулятора p_value
+    :param block_size: Длина последовательности - 128, (длина блока - 8)
+    :return:p_value
     """
     n = len(sequence)
     num_blocks = n // block_size
@@ -102,25 +101,22 @@ def longest_run_of_ones_test_needCalculatorToCount(sequence, block_size=128):
 
     # Ожидаемые значения для block_size = 128
     expected_pi = [0.2148, 0.3672, 0.2305, 0.1875]
-    if block_size == 128:
-        V = [0, 0, 0, 0, 0]
+    if block_size == 8:
+        V = [0, 0, 0, 0]
         for run in max_runs:
-            if run <= 4:
+            if run <= 1:
                 V[0] += 1
-            elif run == 5:
+            elif run == 2:
                 V[1] += 1
-            elif run == 6:
+            elif run == 3:
                 V[2] += 1
-            elif run == 7:
-                V[3] += 1
             else:
-                V[4] += 1
+                V[3] += 1
 
         chi_square = sum((V[i] - num_blocks * expected_pi[i]) ** 2 / (num_blocks * expected_pi[i]) for i in range(4))
-        #p_value = math.igamc(1.5, chi_square/2)
-        #return p_value
+        p_value = gammainc(1.5, chi_square/2)
+        return p_value
 
-        return chi_square/2
     else:
         return 0.0
 
@@ -130,22 +126,22 @@ def main():
         # Загрузка сгенерированной последовательности
         sequence_cpp = read_file(PATH_TO_CPP_SEQ)
 
-        sequence_java = read_file(PATH_TO_CPP_SEQ)
+        sequence_java = read_file(PATH_TO_JAVA_SEQ)
 
         # Применение тестов
         p_value_freq_cpp = frequency_test(sequence_cpp)
         p_value_runs_cpp = runs_test(sequence_cpp)
-        NEED_TO_CALCULATE_cpp = longest_run_of_ones_test_needCalculatorToCount(sequence_cpp)
+        p_value_longest_run_cpp = longest_run_of_ones_test(sequence_cpp)
 
         p_value_freq_java = frequency_test(sequence_java)
         p_value_runs_java = runs_test(sequence_java)
-        NEED_TO_CALCULATE_java = longest_run_of_ones_test_needCalculatorToCount(sequence_java)
+        p_value_longest_run_java = longest_run_of_ones_test(sequence_java)
 
         # Вывод результатов
         print("C++ Sequence:")
         print(f"Frequency Test p-value: {p_value_freq_cpp}")
         print(f"Runs Test p-value: {p_value_runs_cpp}")
-        print(f"Longest Run of Ones Test p-value: {NEED_TO_CALCULATE_cpp}")
+        print(f"Longest Run of Ones Test p-value: {p_value_longest_run_cpp}")
         #Проверил на калькуляторе:
         #Regularized upper incomplete gamma function: 0.63205382
 
@@ -153,13 +149,13 @@ def main():
         print("\nJava Sequence:")
         print(f"Frequency Test p-value: {p_value_freq_java}")
         print(f"Runs Test p-value: {p_value_runs_java}")
-        print(f"Longest Run of Ones Test p-value: {NEED_TO_CALCULATE_java}")
+        print(f"Longest Run of Ones Test p-value: {p_value_longest_run_java}")
         #Проверил на калькуляторе:
         #Regularized upper incomplete gamma function: 0.63205382
 
         #Запись в текстовый файл результаты
-        write_to_file(PATH_TO_NIST_RES_CPP, p_value_freq_cpp, p_value_runs_cpp, NEED_TO_CALCULATE_cpp)
-        write_to_file(PATH_TO_NIST_RES_JAVA, p_value_freq_java, p_value_runs_java, NEED_TO_CALCULATE_java)
+        write_to_file(PATH_TO_NIST_RES_CPP, p_value_freq_cpp, p_value_runs_cpp, p_value_longest_run_cpp)
+        write_to_file(PATH_TO_NIST_RES_JAVA, p_value_freq_java, p_value_runs_java, p_value_longest_run_java)
 
     except FileNotFoundError:
         print("Ошибка: файл зашифрованного текста не найден")

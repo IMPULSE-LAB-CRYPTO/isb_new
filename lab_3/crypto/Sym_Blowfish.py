@@ -8,7 +8,7 @@ class BlowfishCipher:
     def __init__(self, key_length=448):
         """
         Конструктор класса
-        :param key_length: длина ключа (условный параметр - 448)
+        :param key_length: длина ключа  (условный параметр - 448)
         """
         if key_length < 32 or key_length > 448 or key_length % 8 != 0:
             raise ValueError("Blowfish Ключ должен быть от 32 до 448, делиться на 8")

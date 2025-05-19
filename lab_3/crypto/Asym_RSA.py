@@ -1,7 +1,7 @@
 from cryptography.hazmat.primitives.asymmetric import rsa  # Для генерации ключей RSA
 from cryptography.hazmat.primitives import serialization, hashes  # Для сериализации ключей в PEM-формат Хэш-ф OAEP
 from cryptography.hazmat.primitives.asymmetric import padding as asym_padding  # Схемы дополнения для RSA (OAEP/PKCS)
-from cryptography.hazmat.backends import default_backend  # Бэкенд OpenSSL
+from cryptography.hazmat.backends import default_backend  # Бэкенд OpenSSL/TSL
 
 class RSACipher:
     def __init__(self, key_size=2048):

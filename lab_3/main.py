@@ -6,21 +6,16 @@ def parsing() -> argparse.Namespace:
     Парсинг аргументов командной строки
     """
     parser = argparse.ArgumentParser(description='Гибридная криптосистема RSA + Blowfish')
-    subparsers = parser.add_subparsers(dest='command', required=True)
+    group = parser.add_mutually_exclusive_group(required=True)
 
-    # Key generation mode
-    gen_parser = subparsers.add_parser('gen', help='Генерация ключей')
-    gen_parser.add_argument('--key-length', type=int, default=448, help='Длина ключа Blowfish (32-448 бит, шаг 8)')
+    group.add_argument('-gen', '--generation', action='store_true', help='Запускает режим генерации ключей')
+    group.add_argument('-enc', '--encryption', action='store_true', help='Запускает режим шифрования')
+    group.add_argument('-dec', '--decryption', action='store_true', help='Запускает режим дешифрования')
 
-    # Encryption mode
-    enc_parser = subparsers.add_parser('enc', help='Шифрование файла')
-    enc_parser.add_argument('--input', default='texts/original.txt', help='Файл для шифрования')
-    enc_parser.add_argument('--output', default='texts/encrypted.bin', help='Файл для зашифрованных данных')
-
-    # Decryption mode
-    dec_parser = subparsers.add_parser('dec', help='Дешифрование файла')
-    dec_parser.add_argument('--input', default='texts/encrypted.bin', help='Файл для дешифрования')
-    dec_parser.add_argument('--output', default='texts/decrypted.txt', help='Файл для расшифрованных данных')
+    # Общие параметры
+    parser.add_argument('--key-length', type=int, default=448, help='Длина ключа Blowfish (32-448 бит, шаг 8) - только для генерации')
+    parser.add_argument('--input', default='texts/original.txt', help='Входной файл (для шифрования/дешифрования)')
+    parser.add_argument('--output', default=None, help='Выходной файл (для шифрования/дешифрования)')
 
     args = parser.parse_args()
     return args
@@ -47,8 +42,20 @@ def write_file(file_path, data):
 def main():
     args = parsing()
     try:
-        # Загрузка сгенерированной последовательности
-        print("")
+        if args.generation:
+            # Key generation mode
+            print("Генерация ключей...")
+
+            # Save keys (Здесь будет сохранение)
+
+        elif args.encryption:
+            # Encryption mode
+            print("Шифрование файла...")
+
+        elif args.decryption:
+            # Decryption mode
+            print("Дешифрование файла...")
+
 
     except FileNotFoundError:
         print("Ошибка: файл зашифрованного текста не найден")
@@ -56,7 +63,7 @@ def main():
         print("Ошибка: проблема с кодировкой файла")
     except Exception as e:
         print(f"Произошла ошибка: {e}")
-
+        exit(1)
 
 if __name__ == "__main__":
     main()

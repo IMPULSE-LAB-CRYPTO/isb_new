@@ -25,8 +25,38 @@ def parsing() -> argparse.Namespace:
     args = parser.parse_args()
     return args
 
+
 def ensure_texts_dir():
-    """Ensure texts directory exists"""
+    """Проверка на существования директории """
     if not os.path.exists('texts'):
         os.makedirs('texts')
 
+
+def read_file(file_path):
+    """Чтение данных из файла (бинарный режим)"""
+    with open(file_path, 'rb') as f:
+        return f.read()
+
+
+def write_file(file_path, data):
+    """Запись данных в файл (бинарный режим)"""
+    with open(file_path, 'wb') as f:
+        f.write(data)
+
+
+def main():
+    args = parsing()
+    try:
+        # Загрузка сгенерированной последовательности
+        print("")
+
+    except FileNotFoundError:
+        print("Ошибка: файл зашифрованного текста не найден")
+    except UnicodeDecodeError:
+        print("Ошибка: проблема с кодировкой файла")
+    except Exception as e:
+        print(f"Произошла ошибка: {e}")
+
+
+if __name__ == "__main__":
+    main()

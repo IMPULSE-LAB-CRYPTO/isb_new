@@ -11,10 +11,10 @@ class ConfigManager:
         """
         if cls._instance is None: # Создаем новый экз класса и вызываем инициализацию
             cls._instance = super().__new__(cls)
-            cls._instance.__init_config()
+            cls._instance.init_config()
         return cls._instance
 
-    def __init_config(self):
+    def init_config(self):
         """
         Инициализация конфига
         :return: Установка пути к файлу конфигурации
@@ -28,15 +28,15 @@ class ConfigManager:
             'public_key': 'keys/public.pem',
             'private_key': 'keys/private.pem'
         }
-        self.__ensure_config_exists()
+        self.ensure_config_exists()
 
-    def __ensure_config_exists(self):
+    def ensure_config_exists(self):
         """
         Создание файла настроек, если его нет
         :return: Обновленный конфиг
         """
         if not os.path.exists(self.config_path):
-            self._create_directories()
+            self.create_directories()
             self.save_config(self.default_config)
         else:
             # Проверяем, что все необходимые ключи присутствуют в файле
@@ -47,7 +47,7 @@ class ConfigManager:
                         existing_config[key] = self.default_config[key]
                 self.save_config(existing_config)
 
-    def __create_directories(self):
+    def create_directories(self):
         """
         Создание необходимых директорий
         :return: Обновленные директории
@@ -55,7 +55,7 @@ class ConfigManager:
         os.makedirs('texts', exist_ok=True)
         os.makedirs('keys', exist_ok=True)
 
-    def _load_config(self):
+    def load_config(self):
         """
         Возвращение текущих настроек
         :return: Текущие настройки
@@ -78,5 +78,5 @@ class ConfigManager:
         :param key: Входной параметр
         :return: Конкретный параметр
         """
-        config = self._load_config()
+        config = self.load_config()
         return config.get(key)

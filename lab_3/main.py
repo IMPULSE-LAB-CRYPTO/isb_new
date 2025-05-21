@@ -2,7 +2,7 @@ import os
 import argparse
 from Hybrid import HybridCryptoSystem
 from Config_Manager import ConfigManager
-from File_Manager import *
+from File_Manager import FileManager
 
 
 def parsing() -> argparse.Namespace:
@@ -29,9 +29,10 @@ def parsing() -> argparse.Namespace:
 
 def main():
     config = ConfigManager()
+    file_manager = FileManager()
 
     args = parsing()
-    ensure_texts_dir()
+    # ensure_texts_dir()
     crypto = HybridCryptoSystem()
     try:
         if args.generation:
@@ -46,7 +47,7 @@ def main():
 
             # Шифрование и сохранение симметричных ключей
             encrypted_key = crypto.encrypt_symmetric_key(symmetric_key, public_key)
-            write_file(config.get_setting('symmetric_key'), encrypted_key)
+            file_manager.write_file(config.get_setting('symmetric_key'), encrypted_key)
 
             print("Ключи успешно сгенерированы (в папку keys):")
             print(f"- Симметричный ключ (зашифрованный): sym_key.enc")
@@ -61,15 +62,15 @@ def main():
             # Загружаем ключи
             private_key = crypto.rsa.load_private_key(config.get_setting('private_key'))
 
-            encrypted_key = read_file(config.get_setting('symmetric_key'))
+            encrypted_key = file_manager.read_file(config.get_setting('symmetric_key'))
 
             # Расшифровка симметричных ключей
             symmetric_key = crypto.decrypt_symmetric_key(encrypted_key, private_key)
 
             # Чтение и шифрование файла
-            plaintext = read_file(config.get_setting('initial_file'))
+            plaintext = file_manager.read_file(config.get_setting('initial_file'))
             ciphertext = crypto.encrypt_file(plaintext, symmetric_key)
-            write_file(config.get_setting('encrypted_file'), ciphertext)
+            file_manager.write_file(config.get_setting('encrypted_file'), ciphertext)
 
             print(f"Файл успешно зашифрован: {config.get_setting('encrypted_file')}")
 
@@ -79,15 +80,15 @@ def main():
 
             # Загрузка ключей
             private_key = crypto.rsa.load_private_key(config.get_setting('private_key'))
-            encrypted_key = read_file(config.get_setting('symmetric_key'))
+            encrypted_key = file_manager.read_file(config.get_setting('symmetric_key'))
 
             # Расшифровка симметричного ключа
             symmetric_key = crypto.decrypt_symmetric_key(encrypted_key, private_key)
 
             # Чтение и расшифровка файла
-            ciphertext = read_file(config.get_setting('encrypted_file'))
+            ciphertext = file_manager.read_file(config.get_setting('encrypted_file'))
             plaintext = crypto.decrypt_file(ciphertext, symmetric_key)
-            write_file(config.get_setting('decrypted_file'), plaintext)
+            file_manager.write_file(config.get_setting('decrypted_file'), plaintext)
 
             print(f"Файл успешно расшифрован: {config.get_setting('decrypted_file')}")
 
